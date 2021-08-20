@@ -115,7 +115,9 @@ The conditions applied to the `WHERE` clause can itself be a query ( **inner que
 SELECT * FROM table WHERE price = (SELECT MIN(price) FROM table);
 ```
 
-It can be nested quite deep.... One thing in SQL is, **the results of a query can be queried as a real table** 💥
+### Results of a query can be queried as a real table 💥💥💥💥💥💥💥💥
+
+It can be nested quite deep.... One thing in SQL is, **the results of a query can be queried as a real table** !!!!
 
 ```sql
 SELECT COUNT(*) FROM tableA, (SELECT AVG(price) AS ap1 FROM tableA, (SELECT AVG(price) AS ap FROM tableA) WHERE price > ap) WHERE price > ap1;
@@ -204,6 +206,14 @@ SELECT MIN(height) FROM table
 SELECT col1, COUNT(col2) FROM table GROUP BY col1
 ```
 
+This can be handy when using together with the `JOIN`s
+
+```sql
+SELECT tableA.col1, COUNT(tableB.col2) AS b_count FROM tableA LEFT JOIN tableB ON tableA.id = tableB.b_id GROUP BY tableA.col1
+```
+
+
+
 ## Operate on aggregated data again (with `HAVING` clause)
 
 The standard SQL is runnig in the following order:
@@ -214,7 +224,7 @@ The standard SQL is runnig in the following order:
 
 Then if we want to further operate on the aggregated data, we're running out.
 
-So we have `HAVING` for rescue
+So we have `HAVING` for rescue, it acts like `WHERE` clause, just it can be applied after gouping ( aggregation )
 
 ```sql
 /* show col with count, group by col, and the count is greater than 1 */

@@ -50,7 +50,9 @@ DELETE FROM table_name WHERE id = 1;
 
 
 
-As `DELETE` is really dangerous, most SQL engines have some thing for you to go back to the previous point. We called it a **transaction**
+## Transaction
+
+As `DELETE` is really dangerous ( so is `UPDATE` actually... ), most SQL engines have some thing for you to go back to the previous point. We called it a **transaction**
 
 ```sql
 BEGIN; /*The beginning of a transaction*/
@@ -62,4 +64,3 @@ COMMIT; /*commit the changes and complete the transaction*/
 END; /*also commit the changes and complete the transaction*/
 
 ```
-

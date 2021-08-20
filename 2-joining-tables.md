@@ -4,6 +4,10 @@ Every table will have a column ( or collection of columns ) as a unique identifi
 
 To be able to join other tables when querying, we also need to have a `FOREIGN KEY`, which corresponds the `PRIMARY KEY` of other tables we want to join.
 
+
+
+## Inner joins
+
 ### `CROSS JOIN`
 
 This is also confusingly called *no join*, and it's actually a type of `INNER JOIN`.
@@ -29,74 +33,6 @@ SELECT * FROM tableA INNER JOIN tableB ON tableA.col1 = tableB.col2
 
 /* or if you only want one col form tableA */
 SELECT tableA.col1 FROM tableA INNER JOIN tableB ON tableA.col1 = tableB.col2;
-```
-
-
-
-### `LEFT JOIN`
-
-This is also see as an *outer join*. It will includes all rows from the first table, even with no match in the second table
-
-```sql
-/* if tableB doesn't have some values of col2, then we'll see the output value as `NULL` */
-SELECT * FROM tableA LEFT JOIN tableB ON tabelA.col1 = tableB.col2
-```
-
-
-
-### Multiple `INNER JOIN`s
-
-Sometimes if we don't an 1-1 or 1-many relationships between 2 tables ( so basically they have a many-to-many relationship ), we'll have another "link" table to store the relations between those 2.
-
-```sql
-/* assume we have a tableA, a tableB, and an link_table*/
-SELECT tableA.col1, tableB.col2 FROM tableA INNER JOIN link_table ON tabelA.col1 = link_table.col1 INNER JOIN tableB ON link_table.col2 = tableB.col2
-```
-
-
-
-### `UNION JOIN`
-
-You can have 2 tables that hold same column with different values, the `UNION` will return a union (并集) of those 2 tables.
-
-The column must have **same datatype** in both table. If we want to select multiple columns, we must specify them in the **same order**.
-
-- `UNION` ( **remove duplicates** if there's any. )
-
-```sql
-SELECT col1, col2 FROM tableA UNION SELECT col1, col2 FROM tableB
-```
-
-- `UNION ALL` (won't remove the duplicates)
-
-```sql
-SELECT col1 FROM tableA UNION ALL SELECT col1 FROM tableB
-```
-
-
-
-### Table alias
-
-Imagine you need to type a lot of the same table name again & again
-
-```sql
-SELECT * FROM tableA INNER JOIN table_link ON tableA.col1 = table_link.col2 INNER JOIN tableB ON table_link.col3 = tableB.col4;
-```
-
-We can use **table alias** to rewrite the above as
-
-```sql
-SELECT * FROM tableA AS a INNER JOIN table_link as link ON a.col1 = link.col2 INNER JOIN tableB as b ON link.col3 = b.col4;
-```
-
-
-
-### Column alias
-
-Same as table alias, we can use `AS` to rename the columns if needed
-
-```sql
-SELECT long_col_name_1 AS name1, long_col_name_2 AS name2 FROM tableA
 ```
 
 
@@ -135,3 +71,99 @@ The out put would be:
 | Ant Man        | The Wasp      |
 | The Wasp       | Ant Man       |
 
+
+
+### Multiple `INNER JOIN`s
+
+Sometimes if we don't an 1-1 or 1-many relationships between 2 tables ( so basically they have a many-to-many relationship ), we'll have another "link" table to store the relations between those 2.
+
+```sql
+/* assume we have a tableA, a tableB, and an link_table*/
+SELECT tableA.col1, tableB.col2 FROM tableA INNER JOIN link_table ON tabelA.col1 = link_table.col1 INNER JOIN tableB ON link_table.col2 = tableB.col2
+```
+
+
+
+## Outer joins
+
+### `LEFT JOIN`
+
+This is also see as an *outer join*. It will includes all rows from the first table, even with no match in the second table
+
+```sql
+/* if tableB doesn't have some values of col2, then we'll see the output value as `NULL` */
+SELECT * FROM tableA LEFT JOIN tableB ON tabelA.col1 = tableB.col2
+```
+
+
+
+### `UNION JOIN`
+
+You can have 2 tables that hold same column with different values, the `UNION` will return a union (并集) of those 2 tables.
+
+The column must have **same datatype** in both table. If we want to select multiple columns, we must specify them in the **same order**.
+
+- `UNION` ( **remove duplicates** if there's any. )
+
+```sql
+SELECT col1, col2 FROM tableA UNION SELECT col1, col2 FROM tableB
+```
+
+- `UNION ALL` (won't remove the duplicates)
+
+```sql
+SELECT col1 FROM tableA UNION ALL SELECT col1 FROM tableB
+```
+
+
+
+## Alias
+
+### Table alias
+
+Imagine you need to type a lot of the same table name again & again
+
+```sql
+SELECT * FROM tableA INNER JOIN table_link ON tableA.col1 = table_link.col2 INNER JOIN tableB ON table_link.col3 = tableB.col4;
+```
+
+We can use **table alias** to rewrite the above as
+
+```sql
+SELECT * FROM tableA AS a INNER JOIN table_link as link ON a.col1 = link.col2 INNER JOIN tableB as b ON link.col3 = b.col4;
+```
+
+
+
+### Column alias
+
+Same as table alias, we can use `AS` to rename the columns if needed
+
+```sql
+SELECT long_col_name_1 AS name1, long_col_name_2 AS name2 FROM tableA
+```
+
+
+
+## Views
+
+Let's talk more about the most important SQL mindset: **Results of a query can be queried as a real table**
+
+So sometimes it's useful to store the query result as a `VIEW` for it to be used later.
+
+The syntax would be:
+
+```sql
+/* create a view contains 3 cols from 2 different tables */
+CREATE VIEW viewname AS SELECT tableA.col1, tabelA.col2, tableB.col3 FROM tableA LEFT JOIN tableB ON tableA.id = tableB.id
+/* use it as a regular table */
+SELECT * FROM viewname
+
+/* Then get rid of it */
+DROP VIEW viewname
+
+```
+
+### It's a view on the fly
+
+As view is only a saved query, so it contains no data. If the underlying table value changed, then the data get from the view also changes 😌
